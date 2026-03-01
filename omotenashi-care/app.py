@@ -254,7 +254,8 @@ with col_doctor:
         
         st.markdown('<div class="send-btn">', unsafe_allow_html=True)
         
-        def send_doctor_response():
+        # Standard button logic (No callback) to ensure reliability
+        if st.button("Send & Translate / 送信・翻訳", key="send_doctor"):
             doc_text = st.session_state.doc_input_area
             if doc_text:
                 # Call API
@@ -278,11 +279,13 @@ with col_doctor:
                     "audio_bytes": audio_data
                 })
                 
-                # Clear input
-                st.session_state.doc_input_area = ""
+                # We do NOT clear the input automatically to avoid StreamlitAPIException
+                st.success("Message Sent! / 送信しました")
+                time.sleep(1) # Brief pause to show success message
+                st.rerun()
+            else:
+                 st.warning("Please type or record a response.")
 
-        st.button("Send & Translate / 送信・翻訳", key="send_doctor", on_click=send_doctor_response)
-        
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True) # End Doctor Panel
