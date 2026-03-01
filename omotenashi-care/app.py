@@ -234,19 +234,19 @@ with col_doctor:
         
         # Voice Input for Doctor
         doc_voice_text = speech_to_text(
-            language='ja', # Default to Japanese for doctor, but works for English too usually
+            language='ja', # Default to Japanese for doctor
             start_prompt="🎤 Record Reply",
             stop_prompt="🛑 Stop",
             just_once=True,
             key='doc_STT'
         )
         
+        # If voice input is captured, update the text area's session state
         if doc_voice_text:
-            st.session_state.last_doc_input = doc_voice_text
+            st.session_state.doc_input_area = doc_voice_text
             
         doctor_input = st.text_area(
             "Type or Speak your response:", 
-            value=st.session_state.get("last_doc_input", ""),
             height=100, 
             placeholder="Speak or type response here...", 
             key="doc_input_area"
@@ -278,7 +278,7 @@ with col_doctor:
                     })
                     
                     # Clear input after sending
-                    st.session_state.last_doc_input = ""
+                    st.session_state.doc_input_area = ""
                     
                     st.rerun()
             else:
