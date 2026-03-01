@@ -128,6 +128,10 @@ with col_patient:
     st.markdown('<div class="send-btn">', unsafe_allow_html=True)
     if st.button("Send to Doctor / 医師に送る", key="send_patient"):
         if patient_input:
+            # Auto-start session if needed
+            if not st.session_state.session_active:
+                st.session_state.session_active = True
+                
             with st.spinner("Translating & Analyzing..."):
                 # Call Mock API (or Real if key exists)
                 minimax_key = st.session_state.get('MINIMAX_API_KEY') or config.MINIMAX_API_KEY
@@ -137,12 +141,14 @@ with col_patient:
                     api_key=minimax_key
                 )
                 
-                # Update State
-                st.session_state.last_patient_input = patient_input
-                st.session_state.clinical_summary = result
-                st.session_state.messages.append({"role": "patient", "content": patient_input})
-                
-                st.rerun()
+                if result:
+                    # Update State
+                    st.session_state.last_patient_input = patient_input
+                    st.session_state.clinical_summary = result
+                    st.session_state.messages.append({"role": "patient", "content": patient_input})
+                    st.rerun()
+                else:
+                    st.error("Analysis failed. Please check API Key or try again.")
         else:
             st.warning("Please enter your symptoms.")
     st.markdown('</div>', unsafe_allow_html=True)

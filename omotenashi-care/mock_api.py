@@ -20,12 +20,12 @@ def process_patient_input(text, patient_lang="en", api_key=None):
 
     # Construct the prompt for MiniMax
     system_prompt = f"""
-    You are an AI medical assistant for 'Omotenashi Care'.
-    Your goal is to help a doctor understand a foreign patient's symptoms.
+    You are an AI medical interpreter.
+    Your goal is to translate a patient's description into professional Japanese medical terminology for a doctor.
     
     Output JSON format only:
     {{
-        "translation_jp": "Translate patient's input to Japanese. Tone: Extremely polite, empathetic, and 'Omotenashi' style (using Desu/Masu form, very respectful). Avoid robotic language.",
+        "translation_jp": "Translate patient's input to Japanese using standard medical terminology (e.g., '胸部不快感' instead of '胸が変'). Be precise and clinical.",
         "sentiment": "anxious|distressed|calm|confused",
         "urgency": "high|medium|low",
         "symptoms": ["List", "of", "symptoms", "in", "English"],
@@ -78,10 +78,10 @@ def process_doctor_response(text, target_language="en", api_key=None):
     payload = {
         "model": "abab6.5s-chat",
         "messages": [
-            {"role": "system", "content": f"Translate this medical response to {target_lang_name}. Tone: Warm, polite, reassuring (Omotenashi style)."},
+            {"role": "system", "content": f"You are a caring medical assistant ('Omotenashi Care'). Translate this doctor's message to {target_lang_name}. Tone: Extremely warm, reassuring, and polite. Avoid cold medical jargon. Use simple words."},
             {"role": "user", "content": text}
         ],
-        "temperature": 0.3,
+        "temperature": 0.7,  # Increased temperature for more natural/friendly tone
     }
 
     try:
