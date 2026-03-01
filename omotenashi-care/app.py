@@ -39,6 +39,8 @@ if 'last_patient_input' not in st.session_state:
     st.session_state.last_patient_input = ""
 if 'last_voice_input' not in st.session_state:
     st.session_state.last_voice_input = ""
+if 'last_doc_input' not in st.session_state:
+    st.session_state.last_doc_input = ""
 
 # --- HEADER ---
 st.markdown("""
@@ -228,7 +230,27 @@ with col_doctor:
         st.markdown("---")
 
         # 6. Doctor Response
-        doctor_input = st.text_area("Response (JP/EN)", height=100, placeholder="Enter response here...", key="doc_input")
+        st.markdown("<h4>Doctor's Reply / 医師の返信</h4>", unsafe_allow_html=True)
+        
+        # Voice Input for Doctor
+        doc_voice_text = speech_to_text(
+            language='ja', # Default to Japanese for doctor, but works for English too usually
+            start_prompt="🎤 Record Reply",
+            stop_prompt="🛑 Stop",
+            just_once=True,
+            key='doc_STT'
+        )
+        
+        if doc_voice_text:
+            st.session_state.last_doc_input = doc_voice_text
+            
+        doctor_input = st.text_area(
+            "Type or Speak your response:", 
+            value=st.session_state.get("last_doc_input", ""),
+            height=100, 
+            placeholder="Speak or type response here...", 
+            key="doc_input_area"
+        )
         
         st.markdown('<div class="send-btn">', unsafe_allow_html=True)
         if st.button("Send & Translate / 送信・翻訳", key="send_doctor"):
@@ -254,6 +276,9 @@ with col_doctor:
                         "content": translated_response,
                         "audio_bytes": audio_data
                     })
+                    
+                    # Clear input after sending
+                    st.session_state.last_doc_input = ""
                     
                     st.rerun()
             else:
