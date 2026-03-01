@@ -26,38 +26,38 @@ st.markdown(f"""
     }}
 
     /* Global Styles */
-    .stApp {
+    .stApp {{
         background-color: var(--parchment);
         color: var(--ink);
         font-family: 'Noto Sans JP', sans-serif;
-    }
+    }}
     
-    h1, h2, h3 {
+    h1, h2, h3 {{
         font-family: 'Noto Serif JP', serif;
         color: var(--ink);
-    }
+    }}
 
     /* Header */
-    .header-container {
+    .header-container {{
         text-align: center;
         padding: 20px 0;
         border-bottom: 2px solid var(--torii);
         margin-bottom: 20px;
         background-color: white;
-    }
-    .header-title {
+    }}
+    .header-title {{
         font-size: 2.5em;
         color: var(--torii);
         margin: 0;
-    }
-    .header-subtitle {
+    }}
+    .header-subtitle {{
         font-size: 1.2em;
         color: var(--ink);
         opacity: 0.8;
-    }
+    }}
 
     /* Session Banner */
-    .session-banner {
+    .session-banner {{
         background-color: var(--torii);
         color: white;
         text-align: center;
@@ -69,55 +69,55 @@ st.markdown(f"""
         justify-content: center;
         align-items: center;
         gap: 10px;
-    }
+    }}
 
     /* Panels */
-    .panel-container {
+    .panel-container {{
         border-radius: 15px;
         padding: 25px;
         height: 100%;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
+    }}
     
-    .patient-panel {
+    .patient-panel {{
         background-color: rgba(74, 124, 89, 0.05); /* Light Matcha */
         border-top: 5px solid var(--matcha);
-    }
+    }}
     
-    .doctor-panel {
+    .doctor-panel {{
         background-color: rgba(44, 62, 122, 0.05); /* Light Indigo */
         border-top: 5px solid var(--indigo);
-    }
+    }}
 
     /* Buttons */
-    .stButton>button {
+    .stButton>button {{
         border-radius: 8px;
         border: none;
         padding: 10px 24px;
         font-weight: bold;
         transition: all 0.3s;
-    }
+    }}
     
     /* Start Session Button */
-    .start-btn>button {
+    .start-btn>button {{
         background-color: var(--matcha);
         color: white;
         width: 100%;
         font-size: 1.2em;
-    }
-    .start-btn>button:hover {
+    }}
+    .start-btn>button:hover {{
         background-color: #3A6346;
-    }
+    }}
 
     /* Send Button */
-    .send-btn>button {
+    .send-btn>button {{
         background-color: var(--torii);
         color: white;
         width: 100%;
-    }
+    }}
     
     /* Tags & Pills */
-    .tag {
+    .tag {{
         display: inline-block;
         padding: 4px 12px;
         border-radius: 20px;
@@ -125,18 +125,18 @@ st.markdown(f"""
         font-weight: bold;
         margin-right: 8px;
         color: white;
-    }
+    }}
     
-    .tag-sentiment-anxious { background-color: var(--torii); }
-    .tag-sentiment-distressed { background-color: var(--gold); }
-    .tag-sentiment-calm { background-color: var(--matcha); }
-    .tag-sentiment-confused { background-color: var(--indigo); }
+    .tag-sentiment-anxious {{ background-color: var(--torii); }}
+    .tag-sentiment-distressed {{ background-color: var(--gold); }}
+    .tag-sentiment-calm {{ background-color: var(--matcha); }}
+    .tag-sentiment-confused {{ background-color: var(--indigo); }}
     
-    .tag-urgency-high { background-color: var(--torii); }
-    .tag-urgency-medium { background-color: var(--gold); }
-    .tag-urgency-low { background-color: var(--matcha); }
+    .tag-urgency-high {{ background-color: var(--torii); }}
+    .tag-urgency-medium {{ background-color: var(--gold); }}
+    .tag-urgency-low {{ background-color: var(--matcha); }}
     
-    .symptom-pill {
+    .symptom-pill {{
         display: inline-block;
         background-color: var(--matcha);
         color: white;
@@ -144,35 +144,35 @@ st.markdown(f"""
         border-radius: 12px;
         margin: 3px;
         font-size: 0.9em;
-    }
+    }}
 
     /* Chat Bubbles */
-    .transcript-box {
+    .transcript-box {{
         background-color: white;
         border-left: 4px solid var(--matcha);
         padding: 15px;
         margin: 15px 0;
         border-radius: 0 10px 10px 0;
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
+    }}
     
-    .translation-box {
+    .translation-box {{
         background-color: #FFF8E1; /* Light Gold */
         border-left: 4px solid var(--gold);
         padding: 15px;
         margin: 15px 0;
         border-radius: 0 10px 10px 0;
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
+    }}
 
-    .clinical-note {
+    .clinical-note {{
         background-color: white;
         padding: 15px;
         border-radius: 8px;
         border: 1px solid #ddd;
         margin-top: 10px;
         font-family: 'Noto Serif JP', serif;
-    }
+    }}
 
     </style>
 """, unsafe_allow_html=True)
