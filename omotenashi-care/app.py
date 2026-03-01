@@ -83,7 +83,12 @@ with col_patient:
             st.session_state['AGORA_APP_ID'] = agora_app_id
             
         st.markdown("---")
-        st.markdown("If keys are not provided, the app will run in **Mock Mode**.")
+        # Display current status
+        current_mm_key = st.session_state.get('MINIMAX_API_KEY') or config.MINIMAX_API_KEY
+        if current_mm_key and "sk-" in current_mm_key:
+             st.success("✅ MiniMax API Key Configured")
+        else:
+             st.warning("⚠️ Running in Mock Mode")
 
 
     # 2. Start Session Button
@@ -128,7 +133,7 @@ with col_patient:
         if patient_input:
             with st.spinner("Translating & Analyzing..."):
                 # Call Mock API (or Real if key exists)
-                minimax_key = st.session_state.get('MINIMAX_API_KEY')
+                minimax_key = st.session_state.get('MINIMAX_API_KEY') or config.MINIMAX_API_KEY
                 result = mock_api.process_patient_input(
                     patient_input, 
                     st.session_state.patient_lang,
@@ -223,7 +228,7 @@ with col_doctor:
             if doctor_input:
                 with st.spinner("Translating to Patient's Language..."):
                     # Call Mock API (or Real if key exists)
-                    minimax_key = st.session_state.get('MINIMAX_API_KEY')
+                    minimax_key = st.session_state.get('MINIMAX_API_KEY') or config.MINIMAX_API_KEY
                     translated_response = mock_api.process_doctor_response(
                         doctor_input, 
                         st.session_state.patient_lang,

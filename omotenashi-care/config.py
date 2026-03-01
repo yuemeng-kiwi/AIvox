@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # API Keys (Mock or Real)
-# Prioritize Session State keys (from UI) -> Env Vars -> Mock
-MINIMAX_API_KEY = st.session_state.get('MINIMAX_API_KEY') or os.getenv("MINIMAX_API_KEY", "mock_minimax_key")
+# Prioritize Session State keys (from UI) -> Env Vars -> Hardcoded Fallback
+MINIMAX_API_KEY = st.session_state.get('MINIMAX_API_KEY') or os.getenv("MINIMAX_API_KEY", "sk-cp-K2-kmmZVFekS6M4Cdsrb9Mfrfktg7erB7MeE6EUlBpjuXiXu2Q7Wh0WkJR8IviAcbXwxB3OfDOYqBDTXNjtBGUZHalt3QyJxxdnotcQp_2E-b4WrwEuGqvU")
 AGORA_APP_ID = st.session_state.get('AGORA_APP_ID') or os.getenv("AGORA_APP_ID", "mock_agora_app_id")
 
 # Feature Flags
