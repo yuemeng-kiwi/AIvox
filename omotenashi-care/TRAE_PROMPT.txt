@@ -1,0 +1,178 @@
+## About this project 
+  
+ -  
+  
+ ## Project tasks 
+  
+ # MediVoice — AI Medical Communication App 
+  
+ # Hackathon Build Prompt for TRAE 
+  
+ ## PROBLEM 
+  
+ Patients — especially foreigners — face critical communication barriers in healthcare: 
+  
+ - Medical terminology is too complex for patients to understand 
+ - Foreign patients without interpreters are often rejected by doctors 
+ - Human interpreters translate words but miss emotional sentiment and nuance 
+ - Patients cannot accurately describe symptoms in a foreign language 
+ - Misunderstandings between doctors, nurses, and patients lead to misdiagnosis 
+ - Even diagnostic tests (blood work, consultations) fail when patient history is incomplete 
+  
+ Real context: Japan has 3.5M+ foreign residents. Thai, Vietnamese, Chinese, Korean patients 
+ regularly face rejection or misdiagnosis due to language barriers. 
+  
+ --- 
+  
+ ## OBJECTIVE 
+  
+ Build a real-time AI-powered medical communication bridge called **MediVoice** that: 
+  
+ 1. Lets patients speak or type symptoms in their native language 
+ 2. Translates AND preserves emotional sentiment (not just words) 
+ 3. Generates a structured clinical summary for the doctor in Japanese 
+ 4. Translates the doctor's response back to the patient's language 
+ 5. Removes the need for human interpreters in basic consultations 
+  
+ --- 
+  
+ ## SOLUTION OVERVIEW 
+  
+ Two-panel web app (Patient view + Doctor view) with an AI layer in between. 
+  
+ Core flow: 
+ Patient speaks (any language) 
+ → Speech-to-text transcription 
+ → AI: translate + extract symptoms + detect sentiment + write clinical note 
+ → Doctor sees structured summary card in Japanese 
+ → Doctor responds in Japanese/English 
+ → AI translates response back to patient language 
+ → Patient hears/reads response in their language 
+  
+ Key differentiator: We preserve SENTIMENT, not just words. 
+ A patient saying "I feel heavy here" in Thai gets tagged as [anxious + cardiac risk] 
+ — not just translated as "chest discomfort." 
+  
+ --- 
+  
+ --- 
+  
+ --- 
+  
+ --- 
+  
+ # TRAE Master Prompt — Omotenashi Care 
+  
+ # Paste this entire file into TRAE AI chat to generate the app 
+  
+ # ===================== 
+ HACKATHON BUILD PROMPT 
+ App: Omotenashi Care (おもてなしケア) 
+ Track: ⛩️ Omotenashi AI 
+ Stack: TRAE + MiniMax + Agora 
+  
+ ## PROBLEM 
+  
+ Every day in Japan, foreign patients walk into hospitals scared and in pain 
+ — and get turned away or misdiagnosed because of language barriers. 
+  
+ Japan has 3.5 million+ foreign residents plus 35 million tourists per year. 
+ Thai, Vietnamese, Chinese, Korean, Indonesian patients face: 
+  
+ 1. No interpreter available → doctor refuses to treat 
+ 2. Human interpreters translate WORDS not FEELINGS 
+ → A Thai patient saying "I feel something pressing here" becomes 
+ "chest pain" in Japanese. The emotional urgency is lost. 
+ 3. Patients cannot describe symptoms accurately in Japanese 
+ 4. Doctors miss critical context → misdiagnosis 
+ 5. Foreign patients feel scared, dismissed, and alone 
+  
+ This is the opposite of Omotenashi — Japan's philosophy of wholehearted, 
+ anticipatory hospitality. 
+  
+ ## OBJECTIVE 
+  
+ Build "Omotenashi Care" — an AI medical communication bridge that: 
+  
+ 1. Lets patients speak/type symptoms in their native language 
+ 2. Translates AND preserves emotional sentiment (not just words) 
+ 3. Generates a structured clinical note for the doctor in Japanese 
+ 4. Translates the doctor's response warmly back to the patient 
+ 5. (Phase 2) Speaks the response aloud via MiniMax TTS through Agora 
+  
+ ## SOLUTION 
+  
+ Two-panel Streamlit web app: Patient (left) + Doctor (right) 
+  
+ Core flow: 
+ Patient speaks/types in their language 
+ ↓ 
+ [Agora] captures audio stream (Phase 2) 
+ ↓ 
+ [MiniMax STT] speech → text (Phase 2) 
+ ↓ 
+ [MiniMax LLM] → translate + symptoms + sentiment + clinical note 
+ ↓ 
+ Doctor sees structured Japanese summary card 
+ ↓ 
+ Doctor types/speaks response (JP or EN) 
+ ↓ 
+ [MiniMax LLM] → translate to patient language 
+ ↓ 
+ [MiniMax TTS] → warm voice in patient language (Phase 2) 
+ ↓ 
+ [Agora] delivers audio to patient (Phase 2) 
+  
+ ## TECH STACK 
+  
+ | Tool | Role | 
+ | --- | --- | 
+ | TRAE | AI-native IDE — build and iterate the entire app | 
+ | MiniMax | LLM (translation + symptom extraction + sentiment analysis) | 
+ |  | TTS (speak doctor response warmly in patient's language) | 
+ |  | STT (transcribe patient voice — Phase 2) | 
+ | Agora | Real-time audio/video channel between patient and doctor | 
+  
+ No other external dependencies required for core demo. 
+  
+ ## FILE STRUCTURE 
+  
+ omotenashi-care/ 
+ ├── app.py            ← Main Streamlit UI (two-panel layout) 
+ ├── mock_api.py      ← Mock responses + real API stubs (clearly commented) 
+ ├── config.py         ← API keys, feature flags, language data, MiniMax prompt 
+ ├── requirements.txt ← streamlit, requests, python-dotenv 
+ └── TRAE_PROMPT.txt  ← This file 
+  
+ ## SOFTWARE REQUIREMENTS 
+  
+ ### Functional 
+  
+ FR1  Patient selects language from: Thai, Vietnamese, Chinese, Korean, 
+ English, Indonesian, Tagalog, Hindi, Arabic, Spanish 
+ FR2  Patient inputs symptoms via text area (Phase 1) / voice (Phase 2) 
+ FR3  On "Send to Doctor": system returns within 3 seconds: 
+ - Japanese translation of patient's message 
+ - List of detected symptoms (as tag pills) 
+ - Sentiment: anxious | calm | distressed | confused 
+ - Urgency: low | medium | high 
+ - Clinical note in Japanese 
+ FR4  Doctor sees all above in a structured summary card 
+ FR5  Doctor types response in Japanese or English 
+ FR6  System translates and delivers response to patient in their language 
+ FR7  (Phase 2) MiniMax TTS speaks doctor response warmly in patient language 
+ FR8  (Phase 2) Agora connects patient and doctor voice/video 
+  
+ ### Non-Functional 
+  
+ NFR1  App runs in mock/demo mode with NO API keys (for testing) 
+ NFR2  Two-panel responsive layout 
+ NFR3  Session state managed via Streamlit st.session_state 
+ NFR4  All API calls wrapped in try/except with graceful fallback to mock 
+  
+ ## UI DESIGN 
+  
+ Color palette: 
+ --parchment:   #F9F5EE  (background — warm Japanese paper) 
+ --torii:       #C0392B  (accent red — torii gate) 
+ --mat http://config.py/
