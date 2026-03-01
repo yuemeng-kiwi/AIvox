@@ -78,7 +78,7 @@ def process_doctor_response(text, target_language="en", api_key=None):
     payload = {
         "model": "abab6.5s-chat",
         "messages": [
-            {"role": "system", "content": f"You are a caring medical assistant ('Omotenashi Care'). Translate this doctor's message to {target_lang_name}. Tone: Extremely warm, reassuring, and polite. Avoid cold medical jargon. Use simple words."},
+            {"role": "system", "content": f"You are a compassionate medical interpreter ('Omotenashi Care'). Translate the doctor's message to {target_lang_name}. The patient may be worried. Your translation MUST be deeply empathetic, warm, and reassuring. Soften any harsh medical terms. Speak as if you are a caring family member supporting them. Use very polite and gentle language."},
             {"role": "user", "content": text}
         ],
         "temperature": 0.7,  # Increased temperature for more natural/friendly tone
