@@ -25,7 +25,7 @@ st.markdown(f"""
         --text-light: {config.COLORS['text_light']};
     }}
 
-    /* Global Styles */
+    /* Global Styles (Updated) */
     .stApp {{
         background-color: var(--parchment);
         color: var(--ink);
