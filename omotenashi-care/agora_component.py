@@ -63,7 +63,8 @@ def agora_voice_component(app_id, channel_name, uid, token=None):
                     
                 }} catch (error) {{
                     console.error("Error joining channel:", error);
-                    document.getElementById("status").innerText = "❌ Connection Failed";
+                    document.getElementById("status").innerText = "❌ Connection Failed: " + error.message;
+                    document.getElementById("status").className = "status disconnected";
                 }}
             }}
 
