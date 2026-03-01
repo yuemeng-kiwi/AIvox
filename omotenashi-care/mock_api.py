@@ -95,6 +95,30 @@ def process_doctor_response(text, target_language="en", api_key=None):
         return _mock_process_doctor_response(text, target_language)
 
 
+from gtts import gTTS
+import io
+
+def generate_audio_response(text, lang_code="en"):
+    """
+    Generates audio from text using gTTS (Google Text-to-Speech).
+    Returns: BytesIO object containing the audio.
+    """
+    try:
+        # Map our config language codes to gTTS language codes
+        # gTTS supports: 'en', 'ja', 'zh-CN', 'ko', 'es', etc.
+        # Our config: 'en', 'ja', 'zh', 'ko', 'es'
+        gtts_lang = lang_code
+        if lang_code == 'zh': gtts_lang = 'zh-CN'
+        
+        tts = gTTS(text=text, lang=gtts_lang)
+        audio_bytes = io.BytesIO()
+        tts.write_to_fp(audio_bytes)
+        audio_bytes.seek(0)
+        return audio_bytes
+    except Exception as e:
+        print(f"TTS Error: {e}")
+        return None
+
 # --- MOCK FALLBACKS ---
 def _mock_process_patient_input(text, patient_lang):
     time.sleep(1.5)

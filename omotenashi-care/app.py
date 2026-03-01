@@ -170,6 +170,10 @@ with col_patient:
                         <strong>Doctor (Translated):</strong><br>{msg['content']}
                     </div>
                 """, unsafe_allow_html=True)
+                
+                # Check for audio if present
+                if msg.get('audio_bytes'):
+                     st.audio(msg['audio_bytes'], format="audio/mp3")
 
     st.markdown('</div>', unsafe_allow_html=True) # End Patient Panel
 
@@ -238,8 +242,18 @@ with col_doctor:
                         api_key=minimax_key
                     )
                     
+                    # Generate Audio (TTS)
+                    audio_data = mock_api.generate_audio_response(
+                        translated_response, 
+                        st.session_state.patient_lang
+                    )
+                    
                     # Update State
-                    st.session_state.messages.append({"role": "doctor", "content": translated_response})
+                    st.session_state.messages.append({
+                        "role": "doctor", 
+                        "content": translated_response,
+                        "audio_bytes": audio_data
+                    })
                     
                     st.rerun()
             else:
