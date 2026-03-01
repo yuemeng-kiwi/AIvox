@@ -1,14 +1,16 @@
 import os
+import streamlit as st
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # API Keys (Mock or Real)
-MINIMAX_API_KEY = os.getenv("MINIMAX_API_KEY", "mock_minimax_key")
-AGORA_APP_ID = os.getenv("AGORA_APP_ID", "mock_agora_app_id")
+# Prioritize Session State keys (from UI) -> Env Vars -> Mock
+MINIMAX_API_KEY = st.session_state.get('MINIMAX_API_KEY') or os.getenv("MINIMAX_API_KEY", "mock_minimax_key")
+AGORA_APP_ID = st.session_state.get('AGORA_APP_ID') or os.getenv("AGORA_APP_ID", "mock_agora_app_id")
 
 # Feature Flags
-ENABLE_MOCK_MODE = True  # Set to False to use real APIs
+ENABLE_MOCK_MODE = not (st.session_state.get('MINIMAX_API_KEY') or os.getenv("MINIMAX_API_KEY"))
 ENABLE_VOICE = False     # Phase 2 feature
 
 # MiniMax Config
