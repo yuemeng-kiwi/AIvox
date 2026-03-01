@@ -65,7 +65,7 @@ def process_patient_input(text, language):
 def process_doctor_response(text, target_language):
     """
     Simulates processing doctor response.
-    Returns a translation.
+    Returns a translation and optionally audio data (mocked).
     """
     if config.ENABLE_MOCK_MODE:
         time.sleep(1.0)
@@ -73,9 +73,14 @@ def process_doctor_response(text, target_language):
         
         # Specific mock response for the demo scenario
         if "ECG" in text or "electrocardiogram" in text or "心電図" in text:
-            return "The doctor has recommended an electrocardiogram (ECG). Please rest until your appointment."
+            translated_text = "The doctor has recommended an electrocardiogram (ECG). Please rest until your appointment."
+        else:
+            translated_text = f"[{target_lang_name} translation]: {text} (Warm and polite tone)"
             
-        return f"[{target_lang_name} translation]: {text} (Warm and polite tone)"
+        # In a real app, this would return audio bytes from MiniMax T2A
+        # For mock, we return just text, but the UI can use st.audio if we had a file
+        return translated_text
+
     else:
         # TODO: Implement Real MiniMax API call here
         pass
