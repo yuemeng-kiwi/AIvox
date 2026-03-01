@@ -25,7 +25,7 @@ def process_patient_input(text, patient_lang="en", api_key=None):
     
     Output JSON format only:
     {{
-        "translation_jp": "Translate patient's input to Japanese (medical context)",
+        "translation_jp": "Translate patient's input to Japanese. Tone: Extremely polite, empathetic, and 'Omotenashi' style (using Desu/Masu form, very respectful). Avoid robotic language.",
         "sentiment": "anxious|distressed|calm|confused",
         "urgency": "high|medium|low",
         "symptoms": ["List", "of", "symptoms", "in", "English"],

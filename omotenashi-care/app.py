@@ -2,8 +2,9 @@ import streamlit as st
 import config
 import mock_api
 import time
-import agora_component  # New import
+from streamlit_mic_recorder import speech_to_text
 
+def load_css(file_name):
 # Page Configuration (Updated)
 st.set_page_config(
     page_title="Omotenashi Care",
@@ -37,6 +38,8 @@ if 'clinical_summary' not in st.session_state:
     st.session_state.clinical_summary = None
 if 'last_patient_input' not in st.session_state:
     st.session_state.last_patient_input = ""
+if 'last_voice_input' not in st.session_state:
+    st.session_state.last_voice_input = ""
 
 # --- HEADER ---
 st.markdown("""
@@ -100,32 +103,27 @@ with col_patient:
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # 3. Input Method (Text or Voice)
-    input_method = st.radio("Input Method / 入力方法", ["Text / テキスト", "Voice / 音声通話"], horizontal=True)
+    # 3. Input Method (Text / Dictation)
+    st.info("🎙️ Speak directly into your microphone (English supported)")
+    
+    # Use streamlit-mic-recorder
+    text_from_speech = speech_to_text(
+        language='en',
+        start_prompt="🎤 Start Recording",
+        stop_prompt="🛑 Stop Recording",
+        just_once=True,
+        key='STT'
+    )
+    
+    if text_from_speech:
+        st.session_state.last_voice_input = text_from_speech
 
-    if input_method == "Voice / 音声通話":
-        st.info("🎙️ Voice Channel Active. Speak to the doctor directly.")
-        # Embed Agora Component
-        # Use a mock app ID if none is set
-        agora_app_id = st.session_state.get('AGORA_APP_ID') or "mock_app_id"
-        agora_component.agora_voice_component(agora_app_id, "omotenashi-care", 1001)
-        
-        # Simulate voice-to-text input for demo purposes
-        st.markdown("*(Simulated Voice Transcription)*")
-        voice_transcript = st.text_area("Transcript / 文字起こし", 
-            value="I feel a heaviness in my chest, especially when climbing stairs.",
-            height=80,
-            key="voice_transcript_box"
-        )
-        patient_input = voice_transcript
-
-    else:
-        # Text Input
-        patient_input = st.text_area(
-            "Describe your symptoms / 症状を教えてください",
-            height=120,
-            placeholder="Type here... (e.g., I feel heavy in my chest)"
-        )
+    patient_input = st.text_area(
+        "Describe your symptoms / 症状を教えてください",
+        value=st.session_state.get("last_voice_input", ""),
+        height=120,
+        placeholder="Type here or use the microphone button above..."
+    )
     
     # 4. Send Button
     st.markdown('<div class="send-btn">', unsafe_allow_html=True)
