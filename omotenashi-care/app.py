@@ -4,7 +4,6 @@ import mock_api
 import time
 from streamlit_mic_recorder import speech_to_text
 
-def load_css(file_name):
 # Page Configuration (Updated)
 st.set_page_config(
     page_title="Omotenashi Care",
