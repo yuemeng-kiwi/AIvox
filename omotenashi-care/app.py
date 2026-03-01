@@ -253,36 +253,36 @@ with col_doctor:
         )
         
         st.markdown('<div class="send-btn">', unsafe_allow_html=True)
-        if st.button("Send & Translate / 送信・翻訳", key="send_doctor"):
-            if doctor_input:
-                with st.spinner("Translating to Patient's Language..."):
-                    # Call Mock API (or Real if key exists)
-                    minimax_key = st.session_state.get('MINIMAX_API_KEY') or config.MINIMAX_API_KEY
-                    translated_response = mock_api.process_doctor_response(
-                        doctor_input, 
-                        st.session_state.patient_lang,
-                        api_key=minimax_key
-                    )
-                    
-                    # Generate Audio (TTS)
-                    audio_data = mock_api.generate_audio_response(
-                        translated_response, 
-                        st.session_state.patient_lang
-                    )
-                    
-                    # Update State
-                    st.session_state.messages.append({
-                        "role": "doctor", 
-                        "content": translated_response,
-                        "audio_bytes": audio_data
-                    })
-                    
-                    # Clear input after sending
-                    st.session_state.doc_input_area = ""
-                    
-                    st.rerun()
-            else:
-                st.warning("Please enter a response.")
+        
+        def send_doctor_response():
+            doc_text = st.session_state.doc_input_area
+            if doc_text:
+                # Call API
+                minimax_key = st.session_state.get('MINIMAX_API_KEY') or config.MINIMAX_API_KEY
+                translated_response = mock_api.process_doctor_response(
+                    doc_text, 
+                    st.session_state.patient_lang,
+                    api_key=minimax_key
+                )
+                
+                # Generate Audio (TTS)
+                audio_data = mock_api.generate_audio_response(
+                    translated_response, 
+                    st.session_state.patient_lang
+                )
+                
+                # Update State
+                st.session_state.messages.append({
+                    "role": "doctor", 
+                    "content": translated_response,
+                    "audio_bytes": audio_data
+                })
+                
+                # Clear input
+                st.session_state.doc_input_area = ""
+
+        st.button("Send & Translate / 送信・翻訳", key="send_doctor", on_click=send_doctor_response)
+        
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True) # End Doctor Panel
