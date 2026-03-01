@@ -1,86 +1,114 @@
-import time
-import random
+import requests
+import json
 import config
+import time
 
-def process_patient_input(text, language):
-    """
-    Simulates processing patient input.
-    Returns a dictionary with translation_jp, symptoms, sentiment, urgency, doctor_summary.
-    """
-    if config.ENABLE_MOCK_MODE:
-        time.sleep(1.5)  # Simulate API latency
-        
-        text_lower = text.lower()
-        
-        # Default mock response
-        response = {
-            "translation_jp": "（翻訳されたテキスト）",
-            "symptoms": ["不明"],
-            "sentiment": "confused",
-            "urgency": "low",
-            "doctor_summary": "主訴：不明。詳細は問診が必要です。"
-        }
+# MiniMax API Configuration
+MINIMAX_API_URL = "https://api.minimax.chat/v1/text/chatcompletion_v2"
 
-        # Specific mock cases based on keywords (simulating understanding)
-        # Demo Scenario Case
-        if "heaviness in my chest" in text_lower and "climbing stairs" in text_lower:
-             response = {
-                "translation_jp": "階段を上るときに特に胸が重く感じます。毎朝めまいもあります。",
-                "symptoms": ["Chest heaviness on exertion", "Morning dizziness", "Possible dyspnea"],
-                "sentiment": "anxious",
-                "urgency": "high",
-                "doctor_summary": "患者は労作時の胸部圧迫感と起立性めまいを訴えています。心臓疾患の可能性を考慮し、心電図検査を優先してください。"
-            }
-        elif "heavy" in text_lower or "chest" in text_lower or "heart" in text_lower:
-            response = {
-                "translation_jp": "「胸が苦しいです。ここに圧迫感があります。」",
-                "symptoms": ["胸部圧迫感", "心臓不安", "呼吸困難の可能性"],
-                "sentiment": "anxious", 
-                "urgency": "high",
-                "doctor_summary": "主訴：胸部の圧迫感。患者は強い不安を感じており、心疾患のリスクを考慮する必要があります。早急な診察を推奨。"
-            }
-        elif "head" in text_lower or "ache" in text_lower or "pain" in text_lower:
-             response = {
-                "translation_jp": "「頭が痛いです。ズキズキします。」",
-                "symptoms": ["頭痛", "疼痛"],
-                "sentiment": "distressed",
-                "urgency": "medium",
-                "doctor_summary": "主訴：頭痛。疼痛レベルは中程度。継続的な痛みにより苦痛を感じている様子。"
-            }
-        elif "stomach" in text_lower or "belly" in text_lower:
-             response = {
-                "translation_jp": "「お腹が痛いです。」",
-                "symptoms": ["腹痛", "胃部不快感"],
-                "sentiment": "distressed",
-                "urgency": "medium",
-                "doctor_summary": "主訴：腹痛。消化器系の異常の可能性。"
-            }
-        
-        return response
-
-    else:
-        # TODO: Implement Real MiniMax API call here
-        pass
-
-def process_doctor_response(text, target_language):
+def process_patient_input(text, patient_lang="en", api_key=None):
     """
-    Simulates processing doctor response.
-    Returns a translation and optionally audio data (mocked).
+    Calls MiniMax API to analyze patient input.
     """
-    if config.ENABLE_MOCK_MODE:
-        time.sleep(1.0)
-        target_lang_name = config.LANGUAGES.get(target_language, target_language)
+    if not api_key:
+        return _mock_process_patient_input(text, patient_lang)
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    # Construct the prompt for MiniMax
+    system_prompt = f"""
+    You are an AI medical assistant for 'Omotenashi Care'.
+    Your goal is to help a doctor understand a foreign patient's symptoms.
+    
+    Output JSON format only:
+    {{
+        "translation_jp": "Translate patient's input to Japanese (medical context)",
+        "sentiment": "anxious|distressed|calm|confused",
+        "urgency": "high|medium|low",
+        "symptoms": ["List", "of", "symptoms", "in", "English"],
+        "doctor_summary": "A concise clinical summary in English for the doctor."
+    }}
+    """
+
+    payload = {
+        "model": "abab6.5s-chat",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"Patient ({patient_lang}): {text}"}
+        ],
+        "temperature": 0.1,
+        "top_p": 0.95,
+    }
+
+    try:
+        response = requests.post(MINIMAX_API_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        data = response.json()
         
-        # Specific mock response for the demo scenario
-        if "ECG" in text or "electrocardiogram" in text or "心電図" in text:
-            translated_text = "The doctor has recommended an electrocardiogram (ECG). Please rest until your appointment."
-        else:
-            translated_text = f"[{target_lang_name} translation]: {text} (Warm and polite tone)"
+        # Parse the JSON content from the response
+        content = data['choices'][0]['message']['content']
+        # Clean up code blocks if present
+        if "```json" in content:
+            content = content.replace("```json", "").replace("```", "")
             
-        # In a real app, this would return audio bytes from MiniMax T2A
-        # For mock, we return just text, but the UI can use st.audio if we had a file
-        return translated_text
+        return json.loads(content)
+        
+    except Exception as e:
+        print(f"MiniMax API Error: {e}")
+        return _mock_process_patient_input(text, patient_lang)
 
-    else:
-        # TODO: Implement Real MiniMax API call here
-        pass
+
+def process_doctor_response(text, target_language="en", api_key=None):
+    """
+    Calls MiniMax API to translate doctor's response.
+    """
+    if not api_key:
+        return _mock_process_doctor_response(text, target_language)
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    target_lang_name = config.LANGUAGES.get(target_language, "English")
+
+    payload = {
+        "model": "abab6.5s-chat",
+        "messages": [
+            {"role": "system", "content": f"Translate this medical response to {target_lang_name}. Tone: Warm, polite, reassuring (Omotenashi style)."},
+            {"role": "user", "content": text}
+        ],
+        "temperature": 0.3,
+    }
+
+    try:
+        response = requests.post(MINIMAX_API_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        data = response.json()
+        return data['choices'][0]['message']['content']
+        
+    except Exception as e:
+        print(f"MiniMax API Error: {e}")
+        return _mock_process_doctor_response(text, target_language)
+
+
+# --- MOCK FALLBACKS ---
+def _mock_process_patient_input(text, patient_lang):
+    time.sleep(1.5)
+    return {
+        "translation_jp": "患者は胸の重苦しさを訴えており、特に階段を昇るときに症状が悪化します。",
+        "sentiment": "anxious",
+        "urgency": "medium",
+        "symptoms": ["Chest heaviness", "Shortness of breath on exertion"],
+        "doctor_summary": "Patient reports chest heaviness exacerbated by exertion (climbing stairs). Suspected angina or cardiac issue."
+    }
+
+def _mock_process_doctor_response(text, target_language):
+    time.sleep(1.0)
+    target_lang_name = config.LANGUAGES.get(target_language, target_language)
+    if "ECG" in text or "electrocardiogram" in text or "心電図" in text:
+        return "The doctor has recommended an electrocardiogram (ECG). Please rest until your appointment."
+    return f"[{target_lang_name} translation]: {text} (Warm and polite tone)"

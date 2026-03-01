@@ -127,8 +127,13 @@ with col_patient:
     if st.button("Send to Doctor / 医師に送る", key="send_patient"):
         if patient_input:
             with st.spinner("Translating & Analyzing..."):
-                # Call Mock API
-                result = mock_api.process_patient_input(patient_input, st.session_state.patient_lang)
+                # Call Mock API (or Real if key exists)
+                minimax_key = st.session_state.get('MINIMAX_API_KEY')
+                result = mock_api.process_patient_input(
+                    patient_input, 
+                    st.session_state.patient_lang,
+                    api_key=minimax_key
+                )
                 
                 # Update State
                 st.session_state.last_patient_input = patient_input
@@ -217,8 +222,13 @@ with col_doctor:
         if st.button("Send & Translate / 送信・翻訳", key="send_doctor"):
             if doctor_input:
                 with st.spinner("Translating to Patient's Language..."):
-                    # Call Mock API
-                    translated_response = mock_api.process_doctor_response(doctor_input, st.session_state.patient_lang)
+                    # Call Mock API (or Real if key exists)
+                    minimax_key = st.session_state.get('MINIMAX_API_KEY')
+                    translated_response = mock_api.process_doctor_response(
+                        doctor_input, 
+                        st.session_state.patient_lang,
+                        api_key=minimax_key
+                    )
                     
                     # Update State
                     st.session_state.messages.append({"role": "doctor", "content": translated_response})
